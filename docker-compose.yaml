@@ -1,0 +1,37 @@
+version: "3.2"
+
+services:
+  php:
+    build: .
+    container_name: Midas_php
+    volumes:
+      - .:/var/www
+    ports:
+      - 9000:9000
+
+  nginx:
+      image: nginx:latest
+      container_name: Midas_nginx
+      volumes:
+          - .:/var/www
+          - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf
+          - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+          - ./Makefile:/var/www/Makefile
+          - ./logs/:/var/log/nginx/
+      links:
+          - php:php
+      ports:
+          - 80:80
+          - 443:443
+
+  database:
+    container_name: Midas_postgresql
+    image: postgres:13-alpine
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: Midas
+      #volumes:
+      # - ./database:/var/lib/postgresql/data
+    ports:
+      - 5432:5432

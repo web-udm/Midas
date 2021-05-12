@@ -8,8 +8,8 @@ use Symfony\Component\Serializer\Serializer;
 
 class JsonSerializer extends Serializer
 {
-    public function __construct(ObjectNormalizer $objectNormalizer, JsonEncoder $jsonEncoder)
+    public function __construct()
     {
-        parent::__construct([$objectNormalizer], [$jsonEncoder]);
+        parent::__construct([new ObjectNormalizer()], [new JsonEncoder()]);
     }
 }

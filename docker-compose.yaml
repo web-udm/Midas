@@ -31,7 +31,7 @@ services:
       POSTGRES_USER: root
       POSTGRES_PASSWORD: root
       POSTGRES_DB: Midas
-      #volumes:
-      # - ./database:/var/lib/postgresql/data
+    volumes:
+        - ./docker/database:/var/lib/postgresql/data
     ports:
       - 5432:5432

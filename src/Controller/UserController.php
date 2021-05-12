@@ -8,16 +8,32 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Serializer\Encoder\JsonEncoder;
-use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
-use Symfony\Component\Serializer\Serializer;
-
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class UserController extends AbstractController
 {
     #[Route(path: "/post_user", name: 'post_user')]
-    public function postUser(JsonSerializer $jsonSerializer)
+    public function postUser(Request $request, JsonSerializer $jsonSerializer, ValidatorInterface $validator): JsonResponse
     {
-        return new JsonResponse(['t' => $jsonSerializer::class]);
+        /** @var User $user */
+        $user = $jsonSerializer->deserialize($request->getContent(), User::class, 'json');
+
+        $validationErrors = $validator->validate($user);
+
+        if (empty($validationErrors[0]) === false) {
+            return new JsonResponse([
+                'status' => 400,
+                'message' => $validationErrors[0]->getMessage()
+            ], 400);
+        }
+
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->persist($user);
+        $entityManager->flush();
+
+        return new JsonResponse([
+            'status' => 200,
+            'message' => 'Successful registration'
+        ], 200);
     }
 }

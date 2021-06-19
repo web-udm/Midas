@@ -9,31 +9,48 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class UserController extends AbstractController
 {
     #[Route(path: "/post_user", name: 'post_user')]
-    public function postUser(Request $request, JsonSerializer $jsonSerializer, ValidatorInterface $validator): JsonResponse
-    {
-        /** @var User $user */
-        $user = $jsonSerializer->deserialize($request->getContent(), User::class, 'json');
+    public function postUser(
+        Request $request,
+        JsonSerializer $jsonSerializer,
+        ValidatorInterface $validator,
+        UserPasswordEncoderInterface $passwordEncoder
+    ): JsonResponse {
+        try {
+            /** @var User $user */
+            $user = $jsonSerializer->deserialize($request->getContent(), User::class, 'json');
 
-        $validationErrors = $validator->validate($user);
+            $userRepository = $this->getDoctrine()->getRepository(User::class);
 
-        if (empty($validationErrors[0]) === false) {
+            if ($userRepository->findBy(["email" => $user->getEmail()]) !== null) {
+                throw new \Exception('user with this email is already exists');
+            };
+
+            $user->setPassword($passwordEncoder->encodePassword($user, $user->getPassword()));
+
+            $validationErrors = $validator->validate($user);
+
+            if (empty($validationErrors[0]) === false) {
+                throw new \Exception($validationErrors[0]->getMessage());
+            }
+
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($user);
+            $entityManager->flush();
+
+            return new JsonResponse([
+                'status' => 200,
+                'message' => 'Successful registration'
+            ], 200);
+        } catch (\Exception $e) {
             return new JsonResponse([
                 'status' => 400,
-                'message' => $validationErrors[0]->getMessage()
+                'message' => $e->getMessage()
             ], 400);
         }
-
-        $entityManager = $this->getDoctrine()->getManager();
-        $entityManager->persist($user);
-        $entityManager->flush();
-
-        return new JsonResponse([
-            'status' => 200,
-            'message' => 'Successful registration'
-        ], 200);
     }
 }

@@ -26,7 +26,7 @@ class UserController extends AbstractController
 
             $userRepository = $this->getDoctrine()->getRepository(User::class);
 
-            if ($userRepository->findBy(["email" => $user->getEmail()]) !== null) {
+            if (!empty($userRepository->findBy(["email" => $user->getEmail()]))) {
                 throw new \Exception('user with this email is already exists');
             };
 

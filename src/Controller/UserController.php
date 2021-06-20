@@ -13,7 +13,7 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class UserController extends AbstractController
 {
-    #[Route(path: "/post_user", name: 'post_user')]
+    #[Route(path: "/api/post_user", name: 'post_user')]
     public function postUser(
         Request $request,
         JsonSerializer $jsonSerializer,
@@ -52,5 +52,14 @@ class UserController extends AbstractController
                 'message' => $e->getMessage()
             ], 400);
         }
+    }
+
+    #[Route(path: "/api/test", name: 'test')]
+    public function test(): JsonResponse
+    {
+        return new JsonResponse([
+            'status' => 400,
+            'message' => 'hello'
+        ], 400);
     }
 }

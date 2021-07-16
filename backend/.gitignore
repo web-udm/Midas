@@ -9,7 +9,7 @@
 /vendor/
 ###< symfony/framework-bundle ###
 logs/
-.idea/
+../.idea/
 .env
 docker/database/
 

@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "category": "Трансорт",
+    "cost": 25,
+    "date": "2222",
+    "purchase": "",
+    "description": ""
+  },
+  {
+    "id": 2,
+    "category": "Трансорт",
+    "cost": 25,
+    "date": "3333",
+    "purchase": "",
+    "description": ""
+  },
+  {
+    "id": 3,
+    "category": "Еда",
+    "cost": 250,
+    "date": "4444",
+    "purchase": "",
+    "description": ""
+  }
+]

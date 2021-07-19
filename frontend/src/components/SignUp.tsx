@@ -1,12 +1,11 @@
-import React, { useState } from 'react';
+import React, { FormEvent, useState } from 'react';
 import { Button, TextField } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import { getAuth } from './../services/apiService';
 
 
-// interface IProps {
-//   onClose: () => void;
-// }
+interface IProps {
+  onClose: () => void;
+}
 
 interface IState {
   userName: string;
@@ -16,9 +15,16 @@ interface IState {
 
 type THandleChange = (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
 
+type THandleSubmit = (event: FormEvent, onClose: () => void) => void;
 
-const SignUp = () => {
-  const [ userData, setUserData ] = useState({
+const handleSubmit: THandleSubmit = (event, onClose) => {
+  event.preventDefault();
+  onClose();
+}
+
+const SignUp = (props: IProps) => {
+  const { onClose } = props;
+  const [ userData, setUserData ] = useState<IState>({
     userName: '',
     userEmail: '',
     userPassword: '',
@@ -29,17 +35,15 @@ const SignUp = () => {
     setUserData((prevState) => ({
       ...prevState,
       [name]: value,
-    }) as Pick<IState, keyof IState>)
+    }))
   }
   const classes = useStyles();
 
   return (
-    <form className={classes.form} onSubmit={(event) => {
-
-      event.preventDefault();
-      console.log('click to signUp');
-      getAuth();
-    }}>
+    <form
+      className={classes.form}
+      onSubmit={(event) => handleSubmit(event, onClose)}
+    >
       <TextField
         name="userName"
         id="standard-required"
@@ -82,8 +86,8 @@ const useStyles = makeStyles(() => ({
     display: 'flex',
     flexDirection: 'column',
     flexGrow: 1,
-
     paddingTop: '15px',
+
     '& > div': {
       margin: '15px 40px 0 40px',
     },

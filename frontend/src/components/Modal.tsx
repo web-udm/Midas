@@ -4,53 +4,42 @@ import {
   DialogContent,
   Paper,
 } from '@material-ui/core';
-import withStyles, { WithStylesOptions } from '@material-ui/styles/withStyles';
-import { StyleRules } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
+
 
 interface IProps {
+  children: JSX.Element;
   isOpen: boolean;
   onClose: () => void;
-  children: JSX.Element;
-  content?: any;
-  classes: Record<string, string>;
 }
 
-type TProps = IProps & WithStylesOptions;
 
-const Modal = (props: TProps) => {
-  const { children, classes, onClose } = props;
-  console.log(children);
+export const Modal = (props: IProps) => {
+  const { children, isOpen, onClose } = props;
+  const classes = useStyles();
 
   return (
     <Dialog
-      open={props.isOpen}
+      open={isOpen}
       className={classes.root}
       onClose={onClose}
     >
       <Paper className={classes.root}>
-        {/*<DialogTitle>456789</DialogTitle>*/}
         <DialogContent className={classes.content}>
           {children}
         </DialogContent>
-        {/*<DialogActions>*/}
-        {/*  <Button color="primary" onClick={() => console.log(123)}>da</Button>*/}
-        {/*  <Button onClick={() => console.log(321)}>net</Button>*/}
-        {/*</DialogActions>*/}
       </Paper>
     </Dialog>
   )
 }
 
-export function styles(): StyleRules {
+const useStyles = makeStyles(() => {
   return {
     root: {
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
-
-      // height: '200px',
-
       borderBottom: '1px solid grey',
       '& > :first-child': {
         paddingTop: 0,
@@ -59,7 +48,5 @@ export function styles(): StyleRules {
     content: {
       padding: 0,
     },
-  };
-}
-
-export default withStyles(styles)(Modal);
+  }
+});

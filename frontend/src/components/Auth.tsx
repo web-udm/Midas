@@ -10,7 +10,7 @@ interface IProps {
 }
 
 interface ITabPanelProps {
-  index: any;
+  index: number;
   value: any;
   children: React.ReactNode;
   classes: Record<string, string>;
@@ -47,7 +47,7 @@ function a11yProps(index: any) {
 export const AuthModal = (props: IProps) => {
   const { onClose } = props;
   const classes = useStyles();
-  const [tabIndex, setTabIndex] = React.useState(0);
+  const [ tabIndex, setTabIndex ] = React.useState(0);
 
   const handleChange = (event: React.ChangeEvent<{}>, newTabIndex: number) => {
     setTabIndex(newTabIndex);

@@ -16,8 +16,8 @@ export const PageHeader = (props: IProps) => {
 
   return (
     <header className={classes.root}>
-      {props.text}
-      <Button onClick={() => setIsModalOpen(!isModalOpen)}>da</Button>
+      <h2 className={classes.headerText}>{props.text}</h2>
+      <Button onClick={() => setIsModalOpen(!isModalOpen)}>Вход / Регистрация</Button>
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
@@ -34,10 +34,16 @@ const useStyles = makeStyles(() => {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      height: '200px',
+      height: '70px',
       borderBottom: '1px solid grey',
-    }
+    },
+    headerText: {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      height: '70px',
+      borderBottom: '1px solid grey',
+    },
   }
 });
-
 

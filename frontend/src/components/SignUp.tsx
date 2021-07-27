@@ -1,6 +1,7 @@
 import React, { FormEvent, useState } from 'react';
 import { Button, TextField } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
+import { getAuth } from '../services/apiService/apiService';
 
 
 interface IProps {
@@ -15,10 +16,11 @@ interface IState {
 
 type THandleChange = (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
 
-type THandleSubmit = (event: FormEvent, onClose: () => void) => void;
+type THandleSubmit = (event: FormEvent, userData: IState, onClose: () => void) => void;
 
-const handleSubmit: THandleSubmit = (event, onClose) => {
+const handleSubmit: THandleSubmit = async (event, userData, onClose) => {
   event.preventDefault();
+  await getAuth(userData);
   onClose();
 }
 
@@ -42,7 +44,7 @@ const SignUp = (props: IProps) => {
   return (
     <form
       className={classes.form}
-      onSubmit={(event) => handleSubmit(event, onClose)}
+      onSubmit={(event) => handleSubmit(event, userData, onClose)}
     >
       <TextField
         name="userName"

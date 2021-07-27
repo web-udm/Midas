@@ -16,7 +16,7 @@ class HomePage extends React.Component<IProps, IHomePageRouterProps> {
   render() {
     return (
       <Fragment>
-        <PageHeader text='hello' />
+        <PageHeader text='Midas' />
         <CostList data={data} />
       </Fragment>
     )

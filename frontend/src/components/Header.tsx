@@ -1,47 +1,49 @@
 import React, { useState } from 'react';
-import withStyles, { WithStylesOptions } from '@material-ui/styles/withStyles';
 import { Button } from '@material-ui/core';
-import Modal from './Modal';
-import Auth from './Auth';
+import { Modal } from './Modal';
+import { AuthModal } from './Auth';
+import { makeStyles } from '@material-ui/core/styles';
 
 
 interface IProps {
   text: string;
-  classes: Record<string, string>;
 }
 
-type TProps = IProps & WithStylesOptions;
 
-
-const HeaderF = (props: TProps) => {
+export const PageHeader = (props: IProps) => {
   const [ isModalOpen, setIsModalOpen ] = useState(false);
+  const classes = useStyles();
 
   return (
-    <header className={props.classes.root}>
-      {props.text}
-      <Button onClick={() => setIsModalOpen(!isModalOpen)}>da</Button>
+    <header className={classes.root}>
+      <h2 className={classes.headerText}>{props.text}</h2>
+      <Button onClick={() => setIsModalOpen(!isModalOpen)}>Вход / Регистрация</Button>
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
       >
-        <Auth onClose={() => setIsModalOpen(false)} />
+        <AuthModal onClose={() => setIsModalOpen(false)} />
       </Modal>
     </header>
   )
 }
 
-const styles = {
-  root: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-
-    height: '200px',
-
-    borderBottom: '1px solid grey',
+const useStyles = makeStyles(() => {
+  return {
+    root: {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      height: '70px',
+      borderBottom: '1px solid grey',
+    },
+    headerText: {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      height: '70px',
+      borderBottom: '1px solid grey',
+    },
   }
-};
-
-export default withStyles(styles)(HeaderF);
-
+});
 

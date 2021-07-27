@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
 import { RouteComponentProps } from 'react-router';
-import HeaderF from '../components/Header';
+import { PageHeader } from '../components/Header';
 import CostList from '../components/CostsList';
 import data from '../mock.json';
 
@@ -13,11 +13,10 @@ interface IHomePageRouterProps extends RouteComponentProps<IProps> {
 }
 
 class HomePage extends React.Component<IProps, IHomePageRouterProps> {
-
   render() {
     return (
       <Fragment>
-        <HeaderF text='hello'>123</HeaderF>
+        <PageHeader text='Midas' />
         <CostList data={data} />
       </Fragment>
     )

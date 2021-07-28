@@ -21,7 +21,7 @@ type THandleSubmit = (event: FormEvent, userData: IState, onClose: () => void) =
 const handleSubmit: THandleSubmit = async (event, userData, onClose) => {
   event.preventDefault();
   await getAuth(userData);
-  onClose();
+  // onClose();
 }
 
 const SignUp = (props: IProps) => {

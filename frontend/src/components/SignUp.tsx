@@ -1,7 +1,8 @@
 import React, { FormEvent, useState } from 'react';
-import { Button, TextField } from "@material-ui/core";
+import { Button, TextField, Snackbar } from "@material-ui/core";
+import MuiAlert from '@material-ui/lab/Alert';
 import { makeStyles } from "@material-ui/core/styles";
-import { getAuth } from '../services/apiService/apiService';
+import { getMockAuth } from '../services/apiService/apiService';
 
 
 interface IProps {
@@ -9,28 +10,37 @@ interface IProps {
 }
 
 interface IState {
-  userName: string;
-  userEmail: string;
-  userPassword: string;
+  userData: IUser;
+  // todo вынести логику снэкбара выше
+  snackbarData: ISnackbarData;
+}
+
+interface IUser {
+  name: string;
+  email: string;
+  password: string;
+}
+
+interface ISnackbarData {
+  open: boolean,
+  message: string,
 }
 
 type THandleChange = (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
 
-type THandleSubmit = (event: FormEvent, userData: IState, onClose: () => void) => void;
-
-const handleSubmit: THandleSubmit = async (event, userData, onClose) => {
-  event.preventDefault();
-  await getAuth(userData);
-  // onClose();
-}
+type THandleSubmit = (event: FormEvent, userData: IUser) => void;
 
 const SignUp = (props: IProps) => {
   const { onClose } = props;
-  const [ userData, setUserData ] = useState<IState>({
-    userName: '',
-    userEmail: '',
-    userPassword: '',
+  const [ userData, setUserData ] = useState<IState['userData']>({
+    name: '',
+    email: '',
+    password: '',
   })
+  const [ snackbarData, setSnackbarData ] = useState<IState['snackbarData']>({
+    open: false,
+    message: '',
+  });
 
   const handleChange: THandleChange = (event) => {
     const { name, value } = event.currentTarget;
@@ -39,47 +49,71 @@ const SignUp = (props: IProps) => {
       [name]: value,
     }))
   }
+
+  const handleSubmit: THandleSubmit = async (event, userData) => {
+    event.preventDefault();
+    try {
+      const response = await getMockAuth(userData);
+      if (response.status !== 200) {
+        setSnackbarData({ open: true, message: 'Server\'s logic error' });
+      }
+      setSnackbarData({ open: true, message: response.message });
+      window.setTimeout(() => onClose(), 2000);
+    } catch ({ message }) {
+      setSnackbarData({ open: true, message });
+    }
+  }
+
+  const handleCloseSnackbar = () =>
+    setSnackbarData({ ...snackbarData, open: false });
+
   const classes = useStyles();
 
   return (
-    <form
-      className={classes.form}
-      onSubmit={(event) => handleSubmit(event, userData, onClose)}
-    >
-      <TextField
-        name="userName"
-        id="standard-required"
-        label="Имя"
-        variant="outlined"
-        onChange={handleChange}
-      />
-      <TextField
-        required
-        name="userEmail"
-        id="standard-required"
-        label="Почта"
-        variant="outlined"
-        onChange={handleChange}
-      />
-      <TextField
-        required
-        name="userPassword"
-        id="standard-password-input"
-        label="Пароль"
-        type="password"
-        autoComplete="current-password"
-        variant="outlined"
-        onChange={handleChange}
-      />
-      <Button
-        fullWidth
-        color="primary"
-        type="submit"
-        className={classes.logInBtn}
+    <>
+      <form
+        className={classes.form}
+        onSubmit={(event) => handleSubmit(event, userData)}
       >
-        Войти
-      </Button>
-    </form>
+        <TextField
+          name="userName"
+          id="standard-required"
+          label="Имя"
+          variant="outlined"
+          onChange={handleChange}
+        />
+        <TextField
+          required
+          name="userEmail"
+          id="standard-required"
+          label="Почта"
+          variant="outlined"
+          onChange={handleChange}
+        />
+        <TextField
+          required
+          name="userPassword"
+          id="standard-password-input"
+          label="Пароль"
+          type="password"
+          autoComplete="current-password"
+          variant="outlined"
+          onChange={handleChange}
+        />
+        <Button
+          fullWidth
+          color="primary"
+          type="submit"
+          className={classes.logInBtn}
+        >
+          Войти
+        </Button>
+      </form>
+      // todo доработать успешные/предупреждающие/ошибочные кейсы
+      <Snackbar open={snackbarData.open}>
+        <MuiAlert elevation={6} severity="error" variant="filled" onClose={handleCloseSnackbar}>{snackbarData.message}</MuiAlert>
+      </Snackbar>
+    </>
   )
 }
 
